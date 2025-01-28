@@ -1,5 +1,5 @@
 <template>
-    <Header />
+    <Header/>
     <div class="calc-content">
         <!-- Cut Calc app content -->
         <div id="td_list_calc-app" class="container">
@@ -8,49 +8,24 @@
                 <div class="row">
                     <div class="col-md-12"><h4>Выбор материала</h4></div>
                 </div>
+
+                <!-- Отрисовываем первые 4 материала -->
                 <div class="row">
-                    <div class="col-4 col-sm-2 col-md-2 col-xl-1 my-1 hidden-print">
-                        <img
-                            class="img img-responsive active-layer"
-                            src="/media/shop_backbone_media/2024/12/17/rotate_124.jpg"
-                        />
-                    </div>
-                    <div
-                        class="col-4 col-sm-2 col-md-2 col-xl-1 py-1 hidden-print layer-select-js layer-select"
-                        data-layer="38095"
-                        title="ЛДСП Венге Аруба 3500*1750*16 (Д)"
+                    <template
+                        v-for="(material, key) in firstFourMaterials"
+                        :key="key"
                     >
-                        <img
-                            class="img-border img img-responsive"
-                            src="/media/shop_backbone_media/2024/12/17/rotate_123.jpg"
-                            title="ЛДСП Венге Аруба 3500*1750*16 (Д)"
-                            alt="ЛДСП Венге Аруба 3500*1750*16 (Д)"
-                        />
-                    </div>
-                    <div
-                        class="col-4 col-sm-2 col-md-2 col-xl-1 py-1 hidden-print layer-select-js layer-select"
-                        data-layer="36711"
-                        title="ДВП 3300х1700 ИЗ"
-                    >
-                        <img
-                            class="img-border img img-responsive"
-                            src="/media/shop_backbone_media/2024/12/11/rotate_147.jpg"
-                            title="ДВП 3300х1700 ИЗ"
-                            alt="ДВП 3300х1700 ИЗ"
-                        />
-                    </div>
-                    <div
-                        class="col-4 col-sm-2 col-md-2 col-xl-1 py-1 hidden-print layer-select-js layer-select"
-                        data-layer="83250"
-                        title="ЛДСП Белый альпийский W1100 ST9 2800*2070*16 U2"
-                    >
-                        <img
-                            class="img-border img img-responsive"
-                            src="/media/shop_backbone_media/2024/12/17/rotate_125.jpg"
-                            title="ЛДСП Белый альпийский W1100 ST9 2800*2070*16 U2"
-                            alt="ЛДСП Белый альпийский W1100 ST9 2800*2070*16 U2"
-                        />
-                    </div>
+                        <div class="col-4 col-sm-2 col-md-2 col-xl-1 my-1 hidden-print">
+                            <img
+                                class="img img-responsive"
+                                :style="material.id === this.material.id ? 'border: 3px solid #ec564f;box-shadow: -4px 4px 25px rgba(0,0,0,.2)' : ''"
+                                :src="material.images[0].src"
+                                :alt="material.name"
+                                :title="material.name"
+                                @click="setMaterial(material)"
+                            />
+                        </div>
+                    </template>
                     <div class="col-4 col-lg-2 col-sm-2 hidden-print show-catalog-el">
                         <button
                             type="button"
@@ -73,48 +48,111 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-12 mt-5"><h4>Выбор кромки</h4></div>
+                </div>
+
+                <!-- Отрисовываем первые 4 материала -->
+                <div class="row mb-5">
+                    <template
+                        v-for="(edge, key) in firstFourEdges"
+                        :key="key"
+                    >
+                        <div class="col-4 col-sm-2 col-md-2 col-xl-1 my-1 hidden-print">
+                            <img
+                                class="img img-responsive"
+                                :style="edge.id === this.edge.id ? 'border: 3px solid #ec564f;box-shadow: -4px 4px 25px rgba(0,0,0,.2)' : ''"
+                                :src="edge.images[0].src"
+                                :alt="edge.name"
+                                :title="edge.name"
+                                @click="setEdge(edge)"
+                            />
+                        </div>
+                    </template>
+                    <div class="col-4 col-lg-2 col-sm-2 hidden-print show-catalog-el">
+                        <button
+                            type="button"
+                            class="btn nots cabinet-button w-100 show-catalog-js"
+                        >
+                            <span>Выбрать другой</span>&nbsp;
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="currentColor"
+                                class="bi bi-chevron-down"
+                                viewBox="0 0 16 16"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
+                                ></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <hr>
+
                 <div class="row py-3">
                     <div class="col-md-6 layer-title">
                         <h5>
-                            <small class="text-muted">Лист: </small>ЛДСП Дуб бардолино
-                            натуральный H1145 ST10 2800*2070*16 (ЭГ)
+                            <small class="text-muted">Лист: </small> {{ material.name }}
                         </h5>
                     </div>
                     <div class="col-md-3">
                         <h5>
                             <small class="text-muted">Размеры листа(мм): </small
-                            ><span class="layer-size">2770 x 2040</span>
+                            ><span class="layer-size">{{ material.height }} x {{ material.width }}</span>
                         </h5>
                     </div>
                     <div class="col-md-3">
                         <h5>
                             <small class="text-muted">Цена(лист): </small
-                            ><span class="layer-price">4240.00 руб.</span>
+                            ><span class="layer-price">{{ material.price }} руб.</span>
+                        </h5>
+                    </div>
+                </div>
+
+                <div class="row py-3">
+                    <div class="col-md-6 layer-title">
+                        <h5>
+                            <small class="text-muted">Кромка: </small> {{ edge.name }}
+                        </h5>
+                    </div>
+                    <div class="col-md-3">
+                        <h5>
+                            <small class="text-muted">Ширина/Толщина кромки(мм): </small
+                            ><span class="layer-size">{{ edge.height }} x {{ edge.width }}</span>
+                        </h5>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="">
+                            <small class="text-muted">Цена: </small
+                            ><span class="layer-price">{{ edge.price }} руб.</span>
                         </h5>
                     </div>
                 </div>
             </div>
-            <div id="td_list_calc-layers-catalog"></div>
+
+            <hr>
             <div id="td_list_calc-glue">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <div class="switch">
-                            <label
-                            ><span class="col-blue-grey">Стандартный клей для кромки</span
-                            ><input class="gl-right_variant-select" type="checkbox" /><span
-                                class="lever switch-col-light-blue"
-                            ></span
-                            ><span class="col-blue-grey">PUR клей для кромки </span></label
-                            ><span
-                            data-bs-placement="top"
-                            data-bs-toggle="tooltip"
-                            class="tooltip-icon"
-                        ><i class="fa fa-question-circle" aria-hidden="true"></i
-                        ></span>
+                            <label>
+                                <input class="gl-right_variant-select" type="checkbox" style="margin-right: 5px;margin-bottom: 15px;" />
+                                <span class="col-blue-grey">PUR клей для кромки </span>
+                            </label>
+                            <p class="text-muted mb-0">Pur клей - это специальный вид клея, который используется для кромкования мебели. Он получил свое название от немецкой аббревиатуры PUR, что означает "полиуретановый расходный".
+                                Этот способ кромкования обеспечивает прочное и долговечное соединение, которое не только эстетически приятно, но и устойчиво к воздействию влаги, тепла, пара и давления</p>
                         </div>
                     </div>
                 </div>
             </div>
+            <hr>
+
             <div class="row">
                 <div class="col-md-12">
                     <!-- <font color="red"
@@ -153,7 +191,7 @@
                                         tabindex="1"
                                         type="text"
                                         style=""
-                                        v-model="detail.length"
+                                        v-model="detail.height"
                                         class="form-control width-input plane-input"
                                     />
                                 </td>
@@ -193,7 +231,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <Preview :material="material" :kromka="kromka" :details="details" />
+                    <Preview :material="material" :kromka="edges" :details="details"/>
                 </div>
             </div>
         </div>
@@ -253,27 +291,67 @@ export default {
     },
     data() {
         return {
+            materials: [],
+            edges: [],
             material: {
                 width: 2770,
                 height: 2040,
             },
-            kromka: {},
+            edge: {},
             details: [
                 {
-                    length: 0,
+                    height: 0,
                     width: 0,
                     col: 0,
                 },
             ],
         };
     },
-    created() {
-        this.loadOrders
+    computed: {
+        // Берем первые 4 элемента из материалов
+        firstFourMaterials() {
+            return this.materials.slice(0, 4);
+        },
+        // Берем первые 4 элемента из кромок
+        firstFourEdges() {
+            return this.edges.slice(0, 4);
+        },
+    },
+    async created() {
+        const edgesResponse = await this.getEdges()
+        const materialsResponse = await this.getMaterials()
 
-        this.getProducts()
-        console.warn(1)
+        this.setMaterial(this.materials[0])
+        this.setEdge(this.edges[0])
+    },
+    mounted() {
     },
     methods: {
+        setMaterial(material) {
+            let materialProps = material.attributes
+
+            this.material = {
+                id: material.id,
+                width: materialProps[4].options[0],
+                height: materialProps[1].options[0],
+                name: material.name,
+                // image: material.images[0].src,
+                price: Number(material.price)
+            };
+        },
+        setEdge(edge) {
+            let edgeProps = edge.attributes
+
+            this.edge = {
+                id: edge.id,
+                width: edgeProps[3].options[0],
+                height: edgeProps[4].options[0],
+                name: edge.name,
+                price: Number(edge.price)
+            };
+
+            console.log(this.edge)
+        },
         addDetail() {
             this.details.push({
                 length: 0,
@@ -284,39 +362,39 @@ export default {
         loadOrders() {
             return WooService.orders().then(res => (this.orders = res));
         },
-        getProducts() {
+        async getEdges() {
             const consumerKey = 'ck_0fe19a044fcb213c5f657e0c7d72eeec84679d5e';
             const consumerSecret = 'cs_8f1a2a979506f0b4a908a3d6250f041c7d560bd5';
-            let edges = [];
             const edgeCategoryId = 76;  // Замените на ID вашей категории "Кромки"
 
-            axios.defaults.headers.post['Content-Type'] ='application/json;charset=utf-8';
-            axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+            const response = await fetch(`https://ltmaster.ru/wp-json/wc/v3/products?category=${edgeCategoryId}&per_page=100&consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`)
+            const data = await response.json();
 
-            axios.get(`https://ltmaster.ru/wp-json/wc/v3/products?category=${edgeCategoryId}&per_page=100&consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`, {
-                'Access-Control-Allow-Origin': '*',
-                'Authorization': 'ss',
-            }).then(response => {
-                console.log(response)
-            }).then(response => {
-                console.log(response)
-            })
-
-            // Получение кромок
-            // $.ajax({
-            //     url: `https://ltmaster.ru/wp-json/wc/v3/products?category=${edgeCategoryId}&per_page=100&consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`,
-            //     method: 'GET',
-            //     success: function(data) {
-            //         edges = data;
-            //         console.log(edges)
-            //     },
-            //     error: function(err) {
-            //         console.error(err);
-            //     }
-            // });
+            // Преобразуем данные материалов
+            this.edges = data.filter(edges => edges.attributes && edges.attributes.length > 0)
         },
+        async getMaterials() {
+            const consumerKey = 'ck_0fe19a044fcb213c5f657e0c7d72eeec84679d5e';
+            const consumerSecret = 'cs_8f1a2a979506f0b4a908a3d6250f041c7d560bd5';
+            const materialsCategoryId = [78, 74]; // ID категорий материалов
+
+            const response = await fetch(
+                `https://ltmaster.ru/wp-json/wc/v3/products?category=${materialsCategoryId}&per_page=100&consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`
+            );
+            const data = await response.json();
+
+            // Преобразуем данные материалов
+            this.materials = data.filter(material => material.attributes && material.attributes.length > 0)
+        },
+
     },
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.img-responsive, .thumbnail > img, .thumbnail a > img, .carousel-inner > .item > img, .carousel-inner > .item > a > img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+</style>
