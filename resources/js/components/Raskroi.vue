@@ -30,6 +30,7 @@
                         <button
                             type="button"
                             class="btn nots cabinet-button w-100 show-catalog-js"
+                            @click="changeDisplayListMaterial"
                         >
                             <span>Выбрать другой</span>&nbsp;
                             <svg
@@ -48,6 +49,12 @@
                         </button>
                     </div>
                 </div>
+
+                <SelectMaterialList v-if="displayListMaterial" :materials="materials" :material="material"
+                                    @material-updated="setMaterial" @close="changeDisplayListMaterial" @change-category="getMaterials"/>
+
+                <SelectEdgesList v-if="displayListEdge" :edges="edges" :edge="edge"
+                                    @edge-updated="setEdge" @close="changeDisplayListEdge"/>
 
                 <div class="row">
                     <div class="col-md-12 mt-5"><h4>Выбор кромки</h4></div>
@@ -74,6 +81,7 @@
                         <button
                             type="button"
                             class="btn nots cabinet-button w-100 show-catalog-js"
+                            @click="changeDisplayListEdge"
                         >
                             <span>Выбрать другой</span>&nbsp;
                             <svg
@@ -96,10 +104,20 @@
                 <hr>
 
                 <div class="row py-3">
-                    <div class="col-md-6 layer-title">
-                        <h5>
-                            <small class="text-muted">Лист: </small> {{ material.name }}
-                        </h5>
+                    <div class="col-md-12 mb-4">
+                        <p class="fs-5">Лист:</p>
+                        <div class="d-flex justify-content-start align-items-center">
+                            <div class="mr-4" style="margin-right: 15px;">
+                                <div v-if="material.image.length > 0">
+                                    <img :src="material.image" alt="" width="50" class="mb-2">
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h5>
+                                    <small class="text-muted"></small> {{ material.name }}
+                                </h5>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-3">
                         <h5>
@@ -142,11 +160,15 @@
                     <div class="col-md-12">
                         <div class="switch">
                             <label>
-                                <input class="gl-right_variant-select" type="checkbox" style="margin-right: 5px;margin-bottom: 15px;" />
+                                <input class="gl-right_variant-select" type="checkbox"
+                                       style="margin-right: 5px;margin-bottom: 15px;"/>
                                 <span class="col-blue-grey">PUR клей для кромки </span>
                             </label>
-                            <p class="text-muted mb-0">Pur клей - это специальный вид клея, который используется для кромкования мебели. Он получил свое название от немецкой аббревиатуры PUR, что означает "полиуретановый расходный".
-                                Этот способ кромкования обеспечивает прочное и долговечное соединение, которое не только эстетически приятно, но и устойчиво к воздействию влаги, тепла, пара и давления</p>
+                            <p class="text-muted mb-0">Pur клей - это специальный вид клея, который используется для
+                                кромкования мебели. Он получил свое название от немецкой аббревиатуры PUR, что означает
+                                "полиуретановый расходный".
+                                Этот способ кромкования обеспечивает прочное и долговечное соединение, которое не только
+                                эстетически приятно, но и устойчиво к воздействию влаги, тепла, пара и давления</p>
                         </div>
                     </div>
                 </div>
@@ -282,15 +304,22 @@
 <script>
 import Header from './components/Header.vue';
 import Preview from './components/Preview.vue';
+import SelectMaterialList from "./components/SelectMaterialList.vue";
+import SelectEdgesList from "./components/SelectEdgesList.vue";
 
 export default {
     name: "App",
     components: {
+        SelectEdgesList,
+        SelectMaterialList,
         Header,
         Preview,
     },
     data() {
         return {
+            displayListMaterial: false,
+            displayListEdge: false,
+
             materials: [],
             edges: [],
             material: {
@@ -327,10 +356,19 @@ export default {
     mounted() {
     },
     methods: {
+        changeDisplayListEdge() {
+            this.displayListEdge = !this.displayListEdge;
+        },
+        changeDisplayListMaterial() {
+            this.displayListMaterial = !this.displayListMaterial;
+        },
         setMaterial(material) {
+            console.log(material)
+
             let materialProps = material.attributes
 
             this.material = {
+                image: material.images[0]?.src,
                 id: material.id,
                 width: materialProps[4].options[0],
                 height: materialProps[1].options[0],
@@ -349,8 +387,6 @@ export default {
                 name: edge.name,
                 price: Number(edge.price)
             };
-
-            console.log(this.edge)
         },
         addDetail() {
             this.details.push({
@@ -373,10 +409,12 @@ export default {
             // Преобразуем данные материалов
             this.edges = data.filter(edges => edges.attributes && edges.attributes.length > 0)
         },
-        async getMaterials() {
+        async getMaterials(id = 78) {
             const consumerKey = 'ck_0fe19a044fcb213c5f657e0c7d72eeec84679d5e';
             const consumerSecret = 'cs_8f1a2a979506f0b4a908a3d6250f041c7d560bd5';
-            const materialsCategoryId = [78, 74]; // ID категорий материалов
+            const materialsCategoryId = [id]; // ID категорий материалов
+
+            console.log(`Получение материалов ${id}`)
 
             const response = await fetch(
                 `https://ltmaster.ru/wp-json/wc/v3/products?category=${materialsCategoryId}&per_page=100&consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`
